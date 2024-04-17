@@ -3,7 +3,6 @@
 namespace Shetabit\Visitor\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
-use Shetabit\Visitor\Tests\Mocks\Drivers\BarDriver;
 
 class TestCase extends BaseTestCase
 {

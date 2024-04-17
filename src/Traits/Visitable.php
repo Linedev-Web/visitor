@@ -2,10 +2,8 @@
 
 namespace Shetabit\Visitor\Traits;
 
-use Illuminate\Support\Facades\Auth;
-use Shetabit\Visitor\Models\Visit;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Shetabit\Visitor\Models\Visit;
 
 trait Visitable
 {
@@ -22,7 +20,6 @@ trait Visitable
     /**
      * Create a visit log.
      *
-     * @param Model|null $visitor
      *
      * @return mixed
      */

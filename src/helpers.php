@@ -1,5 +1,6 @@
 <?php
-if (!function_exists('visitor')) {
+
+if (! function_exists('visitor')) {
     /**
      * Access visitor through helper.
      *

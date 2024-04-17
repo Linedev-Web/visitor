@@ -10,8 +10,6 @@ class VisitorServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -20,7 +18,7 @@ class VisitorServiceProvider extends ServiceProvider
          */
         $this->publishes(
             [
-                __DIR__.'/../../config/visitor.php' => config_path('visitor.php'),
+                __DIR__ . '/../../config/visitor.php' => config_path('visitor.php'),
             ],
             'config'
         );
@@ -33,7 +31,6 @@ class VisitorServiceProvider extends ServiceProvider
             ], 'migrations');
         }
 
-
         $this->registerMacroHelpers();
     }
 
@@ -45,7 +42,7 @@ class VisitorServiceProvider extends ServiceProvider
         /**
          * Load default configurations.
          */
-        $this->mergeConfigFrom(__DIR__.'/../../config/visitor.php', 'visitor');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/visitor.php', 'visitor');
 
         /**
          * Bind to service container.

@@ -2,8 +2,10 @@
 
 namespace Shetabit\Visitor;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use ReflectionClass;
 use Shetabit\Visitor\Contracts\UserAgentParser;
 use Shetabit\Visitor\Exceptions\DriverNotFoundException;
 use Shetabit\Visitor\Models\Visit;
@@ -54,9 +56,8 @@ class Visitor implements UserAgentParser
     /**
      * Visitor constructor.
      *
-     * @param $config
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(Request $request, $config)
     {
@@ -70,11 +71,10 @@ class Visitor implements UserAgentParser
     /**
      * Change the driver on the fly.
      *
-     * @param $driver
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function via($driver)
     {
@@ -86,70 +86,56 @@ class Visitor implements UserAgentParser
 
     /**
      * Retrieve request's data
-     *
-     * @return array
      */
-    public function request() : array
+    public function request(): array
     {
         return $this->request->all();
     }
 
     /**
      * Retrieve user's ip.
-     *
-     * @return string|null
      */
-    public  function ip() : ?string
+    public function ip(): ?string
     {
         return $this->request->ip();
     }
 
     /**
      * Retrieve request's url
-     *
-     * @return string
      */
-    public function url() : string
+    public function url(): string
     {
         return $this->request->fullUrl();
     }
 
     /**
      * Retrieve request's referer
-     *
-     * @return string|null
      */
-    public function referer() : ?string
+    public function referer(): ?string
     {
         return $_SERVER['HTTP_REFERER'] ?? null;
     }
 
     /**
      * Retrieve request's method.
-     *
-     * @return string
      */
-    public function method() : string
+    public function method(): string
     {
         return $this->request->getMethod();
     }
 
     /**
      * Retrieve http headers.
-     *
-     * @return array
      */
-    public function httpHeaders() : array
+    public function httpHeaders(): array
     {
         return $this->request->headers->all();
     }
 
     /**
      * Retrieve agent.
-     *
-     * @return string
      */
-    public function userAgent() : string
+    public function userAgent(): string
     {
         return $this->request->userAgent() ?? '';
     }
@@ -157,11 +143,10 @@ class Visitor implements UserAgentParser
     /**
      * Retrieve device's name.
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function device() : string
+    public function device(): string
     {
         return $this->getDriverInstance()->device();
     }
@@ -169,11 +154,10 @@ class Visitor implements UserAgentParser
     /**
      * Retrieve platform's name.
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function platform() : string
+    public function platform(): string
     {
         return $this->getDriverInstance()->platform();
     }
@@ -181,11 +165,10 @@ class Visitor implements UserAgentParser
     /**
      * Retrieve browser's name.
      *
-     * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function browser() : string
+    public function browser(): string
     {
         return $this->getDriverInstance()->browser();
     }
@@ -193,11 +176,10 @@ class Visitor implements UserAgentParser
     /**
      * Retrieve languages.
      *
-     * @return array
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function languages() : array
+    public function languages(): array
     {
         return $this->getDriverInstance()->languages();
     }
@@ -205,7 +187,6 @@ class Visitor implements UserAgentParser
     /**
      * Set visitor (user)
      *
-     * @param Model|null $user
      *
      * @return $this
      */
@@ -218,20 +199,16 @@ class Visitor implements UserAgentParser
 
     /**
      * Retrieve visitor (user)
-     *
-     * @return Model|null
      */
-    public function getVisitor() : ?Model
+    public function getVisitor(): ?Model
     {
         return $this->visitor;
     }
 
     /**
      * Create a visit log.
-     *
-     * @param Model $model
      */
-    public function visit(Model $model = null)
+    public function visit(?Model $model = null)
     {
         foreach ($this->except as $path) {
             if ($this->request->is($path)) {
@@ -239,10 +216,9 @@ class Visitor implements UserAgentParser
             }
         }
 
-
         $data = $this->prepareLog();
 
-        if (null !== $model && method_exists($model, 'visitLogs')) {
+        if ($model !== null && method_exists($model, 'visitLogs')) {
             $visit = $model->visitLogs()->create($data);
         } else {
             $visit = Visit::create($data);
@@ -254,8 +230,7 @@ class Visitor implements UserAgentParser
     /**
      * Retrieve online visitors.
      *
-     * @param string $model
-     * @param int $seconds
+     * @param  int  $seconds
      */
     public function onlineVisitors(string $model, $seconds = 180)
     {
@@ -265,9 +240,7 @@ class Visitor implements UserAgentParser
     /**
      * Determine if given visitor or current one is online.
      *
-     * @param Model|null $visitor
-     * @param int $seconds
-     *
+     * @param  int  $seconds
      * @return bool
      */
     public function isOnline(?Model $visitor = null, $seconds = 180)
@@ -280,7 +253,7 @@ class Visitor implements UserAgentParser
             return false;
         }
 
-        return Visit::whereHasMorph('visitor', get_class($visitor), function ($query) use ($visitor, $time) {
+        return Visit::whereHasMorph('visitor', get_class($visitor), function ($query) use ($visitor) {
             $query->where('visitor_id', $visitor->id);
         })->whereDate('created_at', '>=', $time)->count() > 0;
     }
@@ -288,11 +261,10 @@ class Visitor implements UserAgentParser
     /**
      * Prepare log's data.
      *
-     * @return array
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function prepareLog() : array
+    protected function prepareLog(): array
     {
         return [
             'method' => $this->method(),
@@ -307,7 +279,7 @@ class Visitor implements UserAgentParser
             'browser' => $this->browser(),
             'ip' => $this->ip(),
             'visitor_id' => $this->getVisitor() ? $this->getVisitor()->id : null,
-            'visitor_type' => $this->getVisitor() ? get_class($this->getVisitor()): null
+            'visitor_type' => $this->getVisitor() ? get_class($this->getVisitor()) : null,
         ];
     }
 
@@ -316,11 +288,11 @@ class Visitor implements UserAgentParser
      *
      * @return mixed|object
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getDriverInstance()
     {
-        if (!empty($this->driverInstance)) {
+        if (! empty($this->driverInstance)) {
             return $this->driverInstance;
         }
 
@@ -332,7 +304,7 @@ class Visitor implements UserAgentParser
      *
      * @return Driver
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getFreshDriverInstance()
     {
@@ -346,7 +318,7 @@ class Visitor implements UserAgentParser
     /**
      * Validate driver.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function validateDriver()
     {
@@ -356,14 +328,14 @@ class Visitor implements UserAgentParser
 
         $driverClass = $this->config['drivers'][$this->driver];
 
-        if (empty($driverClass) || !class_exists($driverClass)) {
+        if (empty($driverClass) || ! class_exists($driverClass)) {
             throw new DriverNotFoundException('Driver not found in config file. Try updating the package.');
         }
 
-        $reflect = new \ReflectionClass($driverClass);
+        $reflect = new ReflectionClass($driverClass);
 
-        if (!$reflect->implementsInterface(UserAgentParser::class)) {
-            throw new \Exception("Driver must be an instance of Contracts\Driver.");
+        if (! $reflect->implementsInterface(UserAgentParser::class)) {
+            throw new Exception("Driver must be an instance of Contracts\Driver.");
         }
     }
 }

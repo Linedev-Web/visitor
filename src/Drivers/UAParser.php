@@ -2,9 +2,9 @@
 
 namespace Shetabit\Visitor\Drivers;
 
-use UAParser\Parser;
 use Illuminate\Http\Request;
 use Shetabit\Visitor\Contracts\UserAgentParser;
+use UAParser\Parser;
 
 class UAParser implements UserAgentParser
 {
@@ -21,7 +21,6 @@ class UAParser implements UserAgentParser
     /**
      * UAParser constructor.
      *
-     * @param Request $request
      *
      * @throws \UAParser\Exception\FileNotFoundException
      */
@@ -34,7 +33,7 @@ class UAParser implements UserAgentParser
     /**
      * Retrieve device's name.
      */
-    public function device() : string
+    public function device(): string
     {
         return $this->parser->device->family;
     }
@@ -42,7 +41,7 @@ class UAParser implements UserAgentParser
     /**
      * Retrieve platform's name.
      */
-    public function platform() : string
+    public function platform(): string
     {
         return $this->parser->os->family;
     }
@@ -50,7 +49,7 @@ class UAParser implements UserAgentParser
     /**
      * Retrieve browser's name.
      */
-    public function browser() : string
+    public function browser(): string
     {
         return $this->parser->ua->family;
     }
@@ -58,11 +57,11 @@ class UAParser implements UserAgentParser
     /**
      * Retrieve languages.
      */
-    public function languages() : array
+    public function languages(): array
     {
         $languages = [];
 
-        if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        if (! empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
             $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
             $languages[] = $lang;
         }
