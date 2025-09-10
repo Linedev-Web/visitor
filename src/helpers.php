@@ -1,10 +1,12 @@
 <?php
 
+use Shetabit\Visitor\Visitor;
+
 if (! function_exists('visitor')) {
     /**
      * Access visitor through helper.
      *
-     * @return \Shetabit\Visitor\Visitor
+     * @return Visitor
      */
     function visitor()
     {

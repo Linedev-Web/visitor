@@ -3,6 +3,7 @@
 namespace Shetabit\Visitor\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Visit extends Model
 {
@@ -40,7 +41,7 @@ class Visit extends Model
     /**
      * Get the owning visitable model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return MorphTo
      */
     public function visitable()
     {
@@ -50,7 +51,7 @@ class Visit extends Model
     /**
      * Get the owning user model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return MorphTo
      */
     public function visitor()
     {

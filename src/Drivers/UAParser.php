@@ -4,7 +4,9 @@ namespace Shetabit\Visitor\Drivers;
 
 use Illuminate\Http\Request;
 use Shetabit\Visitor\Contracts\UserAgentParser;
+use UAParser\Exception\FileNotFoundException;
 use UAParser\Parser;
+use UAParser\Result\Client;
 
 class UAParser implements UserAgentParser
 {
@@ -16,13 +18,13 @@ class UAParser implements UserAgentParser
     /**
      * Agent parser.
      */
-    protected \UAParser\Result\Client $parser;
+    protected Client $parser;
 
     /**
      * UAParser constructor.
      *
      *
-     * @throws \UAParser\Exception\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function __construct(Request $request)
     {
@@ -72,9 +74,9 @@ class UAParser implements UserAgentParser
     /**
      * Initialize userAgent parser.
      *
-     * @throws \UAParser\Exception\FileNotFoundException
+     * @throws FileNotFoundException
      */
-    protected function initParser(): \UAParser\Result\Client
+    protected function initParser(): Client
     {
         return Parser::create()->parse($this->request->userAgent());
     }

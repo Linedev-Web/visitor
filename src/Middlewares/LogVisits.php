@@ -4,13 +4,14 @@ namespace Shetabit\Visitor\Middlewares;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class LogVisits
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)
